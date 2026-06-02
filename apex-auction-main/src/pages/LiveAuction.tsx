@@ -23,7 +23,7 @@ import hero6 from "@/assets/auction-hero-6.jpg";
 const auctionImages = [hero1, hero2, hero3, hero4, hero5, hero6];
 
 const getAuctionImage = (auction: any) => {
-  const image = auction?.images?.length ? auction.images[0] : auctionImages[auction.imageIndex % auctionImages.length];
+  const image = auction?.images?.length ? auction.images[0] : auctionImages[(auction.imageIndex || 0) % auctionImages.length];
   if (!image) return auctionImages[0];
   if (image.startsWith("http")) return image;
   return `http://localhost:5000/${image}`;

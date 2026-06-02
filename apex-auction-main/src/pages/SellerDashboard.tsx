@@ -42,7 +42,7 @@ const SellerDashboard = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  if (user?.role !== "seller" || user?.sellerStatus !== "approved") {
+  if ((user?.role === "seller" && user?.sellerStatus !== "approved")) {
     const status = user?.sellerStatus ?? "none";
     const title =
       status === "pending"
@@ -55,7 +55,7 @@ const SellerDashboard = () => {
         ? "Your seller application is under review. Check back once an admin approves your request."
         : status === "rejected"
         ? "Your seller request was rejected. Contact support if you think this is a mistake."
-        : "Request seller access to list auction items and manage your own auctions.";
+        : "Request seller access to list auction items and manage your own auctions."
 
     return (
       <div className="min-h-screen pt-20 px-4">
