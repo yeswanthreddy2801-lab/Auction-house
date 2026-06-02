@@ -15,6 +15,7 @@ import authRoutes from './routes/authRoutes.js';
 import sellerRoutes from './routes/sellerRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import { finalizeExpiredAuctions } from './controllers/productController.js';
 
 // Load env vars
 dotenv.config();
@@ -69,8 +70,10 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, async () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    await finalizeExpiredAuctions();
+    setInterval(finalizeExpiredAuctions, 60 * 1000);
 });
 
 // Handle unhandled promise rejections

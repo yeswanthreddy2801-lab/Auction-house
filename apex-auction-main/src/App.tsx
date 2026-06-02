@@ -9,6 +9,9 @@ import Index from "./pages/Index";
 import LiveAuction from "./pages/LiveAuction";
 import Leaderboard from "./pages/Leaderboard";
 import Auth from "./pages/Auth";
+import SellerDashboard from "./pages/SellerDashboard";
+import SellerCreateListing from "./pages/SellerCreateListing";
+import AdminSellerRequests from "./pages/AdminSellerRequests";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,8 +27,12 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/live" element={<LiveAuction />} />
+            <Route path="/live/:id" element={<LiveAuction />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/seller/dashboard" element={<SellerDashboard />} />
+            <Route path="/seller/create" element={<SellerCreateListing />} />
+            <Route path="/admin/seller-requests" element={<AdminSellerRequests />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

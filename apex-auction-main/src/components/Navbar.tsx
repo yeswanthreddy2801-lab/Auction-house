@@ -65,7 +65,10 @@ const Navbar = () => {
               )}
               {user.sellerStatus === 'pending' && <Badge variant="secondary" className="text-[10px] h-5 bg-blue-500/20 text-blue-400 border-none">Pending Seller</Badge>}
               {user.sellerStatus === 'rejected' && <Badge variant="destructive" className="text-[10px] h-5 bg-red-500/20 text-red-400 border-none">Request Rejected</Badge>}
-              {user.role === 'seller' && (
+              {user.role === 'admin' && (
+                <Link to="/admin/seller-requests" className="text-xs font-semibold text-gold hover:underline mr-2">Admin Hub</Link>
+              )}
+              {(user.role === 'seller' || user.sellerStatus === 'approved') && (
                 <Link to="/seller/dashboard" className="text-xs font-semibold text-gold hover:underline mr-2">Seller Hub</Link>
               )}
 
@@ -109,6 +112,24 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
+          {isLoggedIn && user && user.role === 'admin' && (
+            <Link
+              to="/admin/seller-requests"
+              onClick={() => setMobileOpen(false)}
+              className={`block text-sm font-medium py-2 ${isActive('/admin/seller-requests') ? "text-foreground" : "text-muted-foreground"}`}
+            >
+              Admin Hub
+            </Link>
+          )}
+          {isLoggedIn && user && (user.role === 'seller' || user.sellerStatus === 'approved') && (
+            <Link
+              to="/seller/dashboard"
+              onClick={() => setMobileOpen(false)}
+              className={`block text-sm font-medium py-2 ${isActive('/seller/dashboard') ? "text-foreground" : "text-muted-foreground"}`}
+            >
+              Seller Hub
+            </Link>
+          )}
           {isLoggedIn && user ? (
             <div className="flex items-center justify-between pt-2 border-t border-border/30">
               <div className="flex items-center gap-2">

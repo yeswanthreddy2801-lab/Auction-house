@@ -96,10 +96,35 @@ export const createProduct = async (req, res, next) => {
             return res.status(403).json({ success: false, message: 'Only approved sellers can list products' });
         }
 
+        // Approved sellers create live listings immediately.
+        req.body.status = 'approved';
+        req.body.isActive = true;
+
         const product = await Product.create(req.body);
         res.status(201).json({ success: true, data: product });
     } catch (err) {
         next(err);
+    }
+};
+
+export const finalizeExpiredAuctions = async () => {
+    try {
+        const now = new Date();
+        const expiredAuctions = await Product.find({
+            status: 'approved',
+            isActive: true,
+            auctionEndTime: { $lte: now }
+        });
+
+        await Promise.all(expiredAuctions.map(async (product) => {
+            product.isActive = false;
+            if (product.highestBidder) {
+                product.winner = product.highestBidder;
+            }
+            await product.save();
+        }));
+    } catch (err) {
+        console.error('Error finalizing expired auctions:', err.message || err);
     }
 };
 
@@ -180,11 +205,13 @@ export const placeBid = async (req, res, next) => {
         }
 
         // Create bid
-        const bid = await Bid.create({
+        let bid = await Bid.create({
             product: req.params.id,
             bidder: req.user.id,
             amount
         });
+
+        bid = await bid.populate('bidder', 'name email');
 
         // Update product
         product.currentBid = amount;
@@ -198,11 +225,28 @@ export const placeBid = async (req, res, next) => {
     }
 };
 
+// @desc    Get bid history for a product
+// @route   GET /api/products/:id/bids
+// @access  Public
+export const getProductBids = async (req, res, next) => {
+    try {
+        const bids = await Bid.find({ product: req.params.id })
+            .populate('bidder', 'name email')
+            .sort('-createdAt');
+
+        res.status(200).json({ success: true, data: bids });
+    } catch (err) {
+        next(err);
+    }
+};
+
 // @desc    Get home page products
 // @route   GET /api/products/home
 // @access  Public
 export const getHomeProducts = async (req, res, next) => {
     try {
+        await finalizeExpiredAuctions();
+
         // Only approved and active
         const filter = { status: 'approved', isActive: true };
 
@@ -211,10 +255,11 @@ export const getHomeProducts = async (req, res, next) => {
             filter.category = req.query.category;
         }
 
-        let query = Product.find(filter);
+        let query = Product.find(filter).populate('seller', 'name email');
 
         // Sorting mapping
         const sortMap = {
+
             latest: '-createdAt',
             endingSoon: 'auctionEndTime',
             highestBid: '-currentBid',
@@ -233,6 +278,36 @@ export const getHomeProducts = async (req, res, next) => {
             success: true,
             data: products
         });
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const getWinners = async (req, res, next) => {
+    try {
+        await finalizeExpiredAuctions();
+
+        const winners = await Product.find({
+            status: 'approved',
+            isActive: false,
+            auctionEndTime: { $lte: new Date() },
+            highestBidder: { $exists: true, $ne: null }
+        })
+            .populate('highestBidder', 'name email')
+            .populate('seller', 'name')
+            .sort('-currentBid');
+
+        const leaderboard = winners.map((product) => ({
+            id: product._id,
+            title: product.title,
+            winnerName: product.highestBidder?.name || 'Unknown',
+            winnerId: product.highestBidder?._id,
+            finalPrice: product.currentBid,
+            endTime: product.auctionEndTime,
+            sellerName: product.seller?.name || 'Unknown'
+        }));
+
+        res.status(200).json({ success: true, data: leaderboard });
     } catch (err) {
         next(err);
     }

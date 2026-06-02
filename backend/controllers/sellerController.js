@@ -3,7 +3,7 @@ import User from '../models/User.js';
 // @desc    Request to become a seller
 // @route   POST /api/seller/request
 // @access  Private
-export const requestSellerStatus = async (req, res, next) => {
+export const requestSellerStatus = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
 
@@ -23,7 +23,8 @@ export const requestSellerStatus = async (req, res, next) => {
             message: 'Seller request submitted successfully'
         });
     } catch (err) {
-        next(err);
+        console.error('Seller request failed:', err);
+        res.status(500).json({ success: false, error: err.message || 'Server error' });
     }
 };
 

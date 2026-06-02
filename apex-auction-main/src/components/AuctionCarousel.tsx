@@ -56,7 +56,7 @@ const AuctionCarousel = () => {
     if (!isLoggedIn) {
       navigate("/auth");
     } else if (item.status === "live") {
-      navigate("/live");
+      navigate(`/live/${item.id}`);
     }
   };
 

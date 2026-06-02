@@ -50,6 +50,11 @@ const productSchema = new mongoose.Schema({
     totalBids: {
         type: Number,
         default: 0
+    },
+    winner: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        default: null
     }
 }, {
     timestamps: true

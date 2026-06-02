@@ -20,9 +20,13 @@ const seed = async () => {
                 name: 'Admin Seller',
                 email: 'admin@example.com',
                 password: 'Password123',
-                role: 'seller',
+                role: 'admin',
                 sellerStatus: 'approved'
             });
+        } else if (seller.role !== 'admin' || seller.sellerStatus !== 'approved') {
+            seller.role = 'admin';
+            seller.sellerStatus = 'approved';
+            await seller.save();
         }
 
         const auctions = [

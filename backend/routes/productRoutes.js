@@ -6,7 +6,9 @@ import {
     updateProduct,
     deleteProduct,
     placeBid,
-    getHomeProducts
+    getProductBids,
+    getHomeProducts,
+    getWinners
 } from '../controllers/productController.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { validateProduct } from '../middleware/validator.js';
@@ -15,7 +17,9 @@ import upload from '../middleware/upload.js';
 const router = express.Router();
 
 router.get('/home', getHomeProducts);
+router.get('/winners', getWinners);
 router.get('/', getProducts);
+router.get('/:id/bids', getProductBids);
 router.get('/:id', getProduct);
 
 router.post('/', protect, authorize('seller', 'admin'), upload.array('images', 5), validateProduct, createProduct);
