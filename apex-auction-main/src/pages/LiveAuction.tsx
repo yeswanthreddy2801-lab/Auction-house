@@ -96,11 +96,12 @@ const LiveAuction = () => {
   }, [homeItems]);
 
   useEffect(() => {
-    if (id && product && (!selectedAuction || selectedAuction.id !== product.id)) {
+    if (id && product) {
       setSelectedAuction(product);
       setLiveAuctions((prev) => prev.map((auction) => auction.id === product.id ? product : auction));
-    } else if (!id && homeItems.length && !selectedAuction) {
-      setSelectedAuction(homeItems[0]);
+    } else if (!id && homeItems.length) {
+      const matched = selectedAuction ? homeItems.find((item) => item.id === selectedAuction.id) : undefined;
+      setSelectedAuction(matched || homeItems[0]);
     }
   }, [id, product, homeItems, selectedAuction]);
 

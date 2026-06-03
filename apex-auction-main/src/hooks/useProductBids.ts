@@ -6,6 +6,8 @@ export const useProductBids = (productId?: string) => {
   return useQuery<BidEntry[]>({
     queryKey: ['productBids', productId],
     enabled: !!productId,
+    refetchInterval: 2000,
+    refetchIntervalInBackground: true,
     queryFn: async () => {
       const response = await api.get(`/products/${productId}/bids`);
       if (!response.data.success) throw new Error('Failed to fetch bid history');

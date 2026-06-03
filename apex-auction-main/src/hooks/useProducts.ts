@@ -5,6 +5,8 @@ import { AuctionItem } from '@/data/mockData';
 export const useHomeProducts = () => {
     return useQuery({
         queryKey: ['homeProducts'],
+        refetchInterval: 3000,
+        refetchIntervalInBackground: true,
         queryFn: async () => {
             const response = await api.get('/products/home');
             if (!response.data.success) throw new Error('Failed to fetch home products');

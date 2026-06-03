@@ -25,6 +25,10 @@ connectDB();
 
 const app = express();
 
+// Trust proxy when running behind a load balancer / reverse proxy (Render, Vercel, etc.)
+// This allows express-rate-limit to correctly read the real client IP from X-Forwarded-For
+app.set('trust proxy', 1);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

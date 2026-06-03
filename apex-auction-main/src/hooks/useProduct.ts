@@ -5,6 +5,8 @@ export const useProduct = (id?: string) => {
   return useQuery({
     queryKey: ['product', id],
     enabled: !!id,
+    refetchInterval: 2000,
+    refetchIntervalInBackground: true,
     queryFn: async () => {
       const response = await api.get(`/products/${id}`);
       if (!response.data.success) throw new Error('Failed to fetch product');
