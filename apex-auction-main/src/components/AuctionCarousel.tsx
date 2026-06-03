@@ -99,7 +99,7 @@ const AuctionCarousel = () => {
             >
               <div className="relative h-48 overflow-hidden">
                 <img
-                  src={item.images && item.images.length > 0 ? (item.images[0].startsWith('http') ? item.images[0] : `http://localhost:5000/${item.images[0]}`) : auctionImages[item.imageIndex]}
+                  src={item.images && item.images.length > 0 ? (item.images[0].startsWith('http') ? item.images[0] : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/${item.images[0]}`) : auctionImages[item.imageIndex]}
                   alt={item.title}
                   className="w-full h-full object-cover"
                 />

@@ -91,6 +91,14 @@ export const createProduct = async (req, res, next) => {
     try {
         req.body.seller = req.user.id;
 
+        if (req.files?.length) {
+            req.body.images = req.files.map((file) => file.path);
+        }
+
+        if (req.body.currentBid == null) {
+            req.body.currentBid = req.body.startingPrice;
+        }
+
         // Sellers must be approved
         if (req.user.role !== 'admin' && req.user.sellerStatus !== 'approved') {
             return res.status(403).json({ success: false, message: 'Only approved sellers can list products' });
@@ -142,6 +150,10 @@ export const updateProduct = async (req, res, next) => {
         // Make sure user is product seller or admin
         if (product.seller.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({ success: false, message: 'Not authorized to update this product' });
+        }
+
+        if (req.files?.length) {
+            req.body.images = req.files.map((file) => file.path);
         }
 
         product = await Product.findByIdAndUpdate(req.params.id, req.body, {
@@ -290,18 +302,17 @@ export const getWinners = async (req, res, next) => {
         const winners = await Product.find({
             status: 'approved',
             isActive: false,
-            auctionEndTime: { $lte: new Date() },
-            highestBidder: { $exists: true, $ne: null }
+            winner: { $exists: true, $ne: null }
         })
-            .populate('highestBidder', 'name email')
+            .populate('winner', 'name email')
             .populate('seller', 'name')
             .sort('-currentBid');
 
         const leaderboard = winners.map((product) => ({
             id: product._id,
             title: product.title,
-            winnerName: product.highestBidder?.name || 'Unknown',
-            winnerId: product.highestBidder?._id,
+            winnerName: product.winner?.name || 'Unknown',
+            winnerId: product.winner?._id,
             finalPrice: product.currentBid,
             endTime: product.auctionEndTime,
             sellerName: product.seller?.name || 'Unknown'

@@ -26,7 +26,7 @@ const getAuctionImage = (auction: any) => {
   const image = auction?.images?.length ? auction.images[0] : auctionImages[(auction.imageIndex || 0) % auctionImages.length];
   if (!image) return auctionImages[0];
   if (image.startsWith("http")) return image;
-  return `http://localhost:5000/${image}`;
+  return `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/${image}`;
 };
 
 const LiveAuction = () => {

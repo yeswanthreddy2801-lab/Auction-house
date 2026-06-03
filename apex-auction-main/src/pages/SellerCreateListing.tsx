@@ -71,7 +71,7 @@ const SellerCreateListing = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  const isSellerApproved = user?.role === "seller" && user?.sellerStatus === "approved";
+  const isSellerApproved = (user?.role === "seller" || user?.role === "admin") && user?.sellerStatus === "approved";
 
   if (!isSellerApproved) {
     const status = user?.sellerStatus ?? "none";

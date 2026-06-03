@@ -17,9 +17,18 @@ export const useRequestSeller = () => {
                 await refreshUser();
             }
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error('Seller request error:', error);
-            const message = error.response?.data?.message || error.response?.data?.error || 'Failed to submit request';
+
+            const errorResponse = error as {
+                response?: { data?: { message?: string; error?: string } };
+            };
+
+            const message =
+                errorResponse?.response?.data?.message ||
+                errorResponse?.response?.data?.error ||
+                'Failed to submit request';
+
             toast.error(message);
         }
     });
