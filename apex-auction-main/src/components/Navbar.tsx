@@ -130,6 +130,20 @@ const Navbar = () => {
               Seller Hub
             </Link>
           )}
+          {isLoggedIn && user && user.role === 'buyer' && user.sellerStatus === 'none' && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                requestSeller.mutate();
+                setMobileOpen(false);
+              }}
+              disabled={requestSeller.isPending}
+              className="w-full text-xs h-8 border-gold/50 text-gold hover:bg-gold/10"
+            >
+              Become a Seller
+            </Button>
+          )}
           {isLoggedIn && user ? (
             <div className="flex items-center justify-between pt-2 border-t border-border/30">
               <div className="flex items-center gap-2">
