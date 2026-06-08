@@ -25,6 +25,7 @@ connectDB();
 
 const app = express();
 
+//it is similar to load balancer
 // Trust proxy when running behind a load balancer / reverse proxy (Render, Vercel, etc.)
 // This allows express-rate-limit to correctly read the real client IP from X-Forwarded-For
 app.set('trust proxy', 1);
